@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{ board['name'] }} - {{ board['desc'] }}</title>
+	</head>
+	<body>
+		<a href="/">Main page</a>
+		<div>
+			<form method="post" action="/{{board['name']}}/">
+				Title: <input type="text" name="title" />
+				Message: <br />
+				<textarea name="message">
+				</textarea>
+				<input type="submit" />
+			</form>	
+			<div>
+				<hr />
+				{% for thread in threads %}
+					{% for post in thread %}
+						{{ post['title'] }} {{ post['number'] }}<br />
+						{{ post['text'] }}<br />
+					{% end %}
+					<hr />
+				{% end %}
+			</div>
+		</div>
+	</body>
+</html>
