@@ -34,15 +34,7 @@ class BoardHandler(RequestHandler):
     def post(self, board):
         title = self.get_argument("title", None)
         message = self.get_argument("message", None)
-        try:
-            post_number = db.posts.find().sort('number', -1).limit(1)[0]['number']
-        except (IndexError):
-            post_number = 0
-        try:
-            thread_number = db.threads.find().sort('number', -1).limit(1)[0]['number']
-        except (IndexError):
-            thread_number = 0
-        number = max(post_number, thread_number) + 1
+        number = max_number()
         db.threads.insert({
             'board': board, 
             'number': int(number), 
@@ -53,16 +45,39 @@ class BoardHandler(RequestHandler):
 
 class ThreadHandler(RequestHandler):
 
-    def get(self, number):
+    def get(self, board, number):
         thread = list(db.threads.find({'number': int(number)}))
         posts = list(db.posts.find({'thread': number}))
         thread += posts
-        self.render("templates/thread.html", thread=thread)
+        self.render("templates/thread.html", thread=thread, board=board)
+
+    def post(self, board, number):
+        title = self.get_argument("title", None)
+        text = self.get_argument("text", None)
+        db.posts.insert({
+            'text': text, 
+            'title': title, 
+            'thread': number, 
+            'number': max_number()})
+        self.redirect("/"+ board + "/" + number)
+
+
+def max_number():
+    try:
+        post_number = db.posts.find().sort('number', -1).limit(1)[0]['number']
+    except (IndexError):
+        post_number = 0
+    try:
+        thread_number = db.threads.find().sort('number', -1).limit(1)[0]['number']
+    except (IndexError):
+        thread_number = 0
+    return max(post_number, thread_number) + 1
+
 
 application = tornado.web.Application([
     (r"^/", MainHandler),
     (r"^/([a-z]+)/", BoardHandler),
-    (r"/[a-z]/(\d+)", ThreadHandler)
+    (r"/([a-z]+)/(\d+)", ThreadHandler)
 ])
 
 if __name__ == "__main__":

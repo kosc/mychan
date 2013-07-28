@@ -5,9 +5,15 @@
 	</head>
 	<body>
 		{% for post in thread %}
-			{{ post['title'] }}<br />
+			{{ post['title'] }} {{ post['number'] }}<br />
 			{{ post['text'] }}
 			<hr />
 		{% end %}
+		<form method="POST" action="/{{ board }}/{{ thread[0]['number'] }}">
+			Title: <input type="text" name="title" /> <br />
+			Text: <textarea name="text" >
+			</textarea><br />
+			<input type="submit" />
+		</form>
 	</body>
 </html>
