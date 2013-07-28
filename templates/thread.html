@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Thread</title>
+	</head>
+	<body>
+		{% for post in thread %}
+			{{ post['title'] }}<br />
+			{{ post['text'] }}
+			<hr />
+		{% end %}
+	</body>
+</html>

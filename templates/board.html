@@ -17,7 +17,8 @@
 				<hr />
 				{% for thread in threads %}
 					{% for post in thread %}
-						{{ post['title'] }} {{ post['number'] }}<br />
+						{{ post['title'] }} 
+						<a href="/{{ board['name'] }}/{{ post['number'] }}">{{ post['number'] }}</a> <br />
 						{{ post['text'] }}<br />
 					{% end %}
 					<hr />

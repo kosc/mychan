@@ -43,12 +43,26 @@ class BoardHandler(RequestHandler):
         except (IndexError):
             thread_number = 0
         number = max(post_number, thread_number) + 1
-        db.threads.insert({'board': board, 'number': int(number), 'title': title, 'text': message})
+        db.threads.insert({
+            'board': board, 
+            'number': int(number), 
+            'title': title, 
+            'text': message})
         self.redirect("/" + board + "/")
 
+
+class ThreadHandler(RequestHandler):
+
+    def get(self, number):
+        thread = list(db.threads.find({'number': int(number)}))
+        posts = list(db.posts.find({'thread': number}))
+        thread += posts
+        self.render("templates/thread.html", thread=thread)
+
 application = tornado.web.Application([
-    (r"/", MainHandler),
-    (r"/([^/]+)/", BoardHandler)
+    (r"^/", MainHandler),
+    (r"^/([a-z]+)/", BoardHandler),
+    (r"/[a-z]/(\d+)", ThreadHandler)
 ])
 
 if __name__ == "__main__":
