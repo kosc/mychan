@@ -6,16 +6,20 @@
 	<body>
 		<a href="/">Main page</a>
 		<div>
-			<form method="post" action="/{{board['name']}}/">
+			<form enctype="multipart/form-data" method="post" action="/{{board['name']}}/">
 				Title: <input type="text" name="title" /><br />
 				Text: <textarea name="message">
-				</textarea>
+				</textarea><br />
+				Image: <input type="file" name="image" /><br />
 				<input type="submit" />
 			</form>	
 			<div>
 				<hr />
 				{% for thread in threads %}
 					{% for post in thread %}
+						{% if post['image'] != '' %}
+							<img src="/static/images/{{ post['image'] }}" width="200" />
+						{% end %}
 						{{ post['title'] }} 
 						<a href="/{{ board['name'] }}/{{ post['number'] }}">{{ post['number'] }}</a> <br />
 						{{ post['text'] }}<br />

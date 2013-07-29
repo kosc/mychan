@@ -35,11 +35,18 @@ class BoardHandler(RequestHandler):
         title = self.get_argument("title", None)
         message = self.get_argument("message", None)
         number = max_number()
+        file_name = ''
+        if 'image' in self.request.files:
+            image_body = self.request.files['image'][0]['body']
+            file_name = board + '_' + str(number) + '.jpg'
+            img = open('static/images/' + file_name, 'wb')
+            img.write(image_body)
         db.threads.insert({
             'board': board, 
             'number': int(number), 
             'title': title, 
-            'text': message})
+            'text': message,
+            'image': file_name})
         self.redirect("/" + board + "/")
 
 
@@ -54,12 +61,20 @@ class ThreadHandler(RequestHandler):
     def post(self, board, number):
         title = self.get_argument("title", None)
         text = self.get_argument("text", None)
+        file_name = ''
+        if 'image' in self.request.files:
+            image_body = self.request.files['image'][0]['body']
+            file_name = board + '_' + str(number) + '.jpg'
+            img = open('static/images/' + file_name, 'wb')
+            img.write(image_body)
         db.posts.insert({
             'text': text, 
             'title': title, 
             'thread': number, 
-            'number': max_number()})
+            'number': max_number(),
+            'image': file_name})
         self.redirect("/"+ board + "/" + number)
+
 
 
 def max_number():
@@ -77,7 +92,8 @@ def max_number():
 application = tornado.web.Application([
     (r"^/", MainHandler),
     (r"^/([a-z]+)/", BoardHandler),
-    (r"/([a-z]+)/(\d+)", ThreadHandler)
+    (r"/([a-z]+)/(\d+)", ThreadHandler),
+    (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": "./static"},),
 ])
 
 if __name__ == "__main__":
