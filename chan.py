@@ -12,7 +12,12 @@ class MainHandler(RequestHandler):
 
     def get(self):
         boards = db.boards.find({}, {'name': 1, 'desc': 1})
-        self.render("templates/index.html", boards=boards)
+        args = {'boards': boards}
+        title = 'Home Page'
+        self.render("templates/layout.html",
+                    args=args,
+                    page='index.html',
+                    title=title)
 
 
 class BoardHandler(RequestHandler):
@@ -27,9 +32,12 @@ class BoardHandler(RequestHandler):
             for post in posts:
                 thread.append(post)
             threads.append(thread)
-        self.render("templates/board.html", 
-                    board=board, 
-                    threads=threads)
+        args = {'board': board, 'threads': threads}
+        title = brd + ' - Threads'
+        self.render("templates/layout.html",
+                    args=args,
+                    page='board.html',
+                    title=title)
 
     def post(self, board):
         title = self.get_argument("title", None)
@@ -42,9 +50,9 @@ class BoardHandler(RequestHandler):
             img = open('static/images/' + file_name, 'wb')
             img.write(image_body)
         db.threads.insert({
-            'board': board, 
-            'number': int(number), 
-            'title': title, 
+            'board': board,
+            'number': int(number),
+            'title': title,
             'text': message,
             'image': file_name})
         self.redirect("/" + board + "/")
@@ -56,7 +64,12 @@ class ThreadHandler(RequestHandler):
         thread = list(db.threads.find({'number': int(number)}))
         posts = list(db.posts.find({'thread': number}))
         thread += posts
-        self.render("templates/thread.html", thread=thread, board=board)
+        args = {'thread': thread, 'board': board}
+        title = board + ' - Thread #' + str(number)
+        self.render("templates/layout.html",
+                    args=args,
+                    page='thread.html',
+                    title=title)
 
     def post(self, board, number):
         title = self.get_argument("title", None)
@@ -68,13 +81,12 @@ class ThreadHandler(RequestHandler):
             img = open('static/images/' + file_name, 'wb')
             img.write(image_body)
         db.posts.insert({
-            'text': text, 
-            'title': title, 
-            'thread': number, 
+            'text': text,
+            'title': title,
+            'thread': number,
             'number': max_number(),
             'image': file_name})
-        self.redirect("/"+ board + "/" + number)
-
+        self.redirect("/" + board + "/" + number)
 
 
 def max_number():
@@ -83,10 +95,10 @@ def max_number():
     except (IndexError):
         post_number = 0
     try:
-        thread_number = db.threads.find().sort('number', -1).limit(1)[0]['number']
+        thr_number = db.threads.find().sort('number', -1).limit(1)[0]['number']
     except (IndexError):
-        thread_number = 0
-    return max(post_number, thread_number) + 1
+        thr_number = 0
+    return max(post_number, thr_number) + 1
 
 
 application = tornado.web.Application([
