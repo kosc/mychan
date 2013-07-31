@@ -1,14 +1,7 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<title>Welcome to MyChan!</title>
-	</head>
-	<body>
-		<h1>Hello!</h1>
-		<div>
-			{% for board in boards %}
-				<a href="/{{ board['name'] }}/">/{{ board['name']	}}/</a> - {{ board['desc'] }}<br />
-			{% end %}
-		</div>
-	</body>
-</html>
+<h1>Hello!</h1>
+<div>
+	{% set boards = args['boards'] %}
+	{% for board in boards %}
+		<a href="/{{ board['name'] }}/">/{{ board['name']	}}/</a> - {{ board['desc'] }}<br />
+	{% end %}
+</div>
