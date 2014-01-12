@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.2
 from pymongo import MongoClient
 import tornado.web
 from tornado.web import RequestHandler
