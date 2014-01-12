@@ -1,12 +1,15 @@
 {% set thread = args['thread'] %}
 {% set board = args['board'] %}
 {% for post in thread %}
-	{% if post['image'] != '' %}
-		<img src="/static/images/{{ post['image'] }}" width="200" />
-	{% end %}
-	{{ post['title'] }} {{ post['number'] }}<br />
-	{{ post['text'] }}
-	<hr />
+	<div class="post">
+		<span class="title">{{ post['title'] }}</span> {{ post['number'] }}
+		<br />
+		{% if post['image'] != '' %}
+			<img src="/static/images/{{ post['image'] }}" width="200" />
+		{% end %}
+		<br />
+		{{ post['text'] }}
+	</div>
 {% end %}
 <form enctype="multipart/form-data" method="POST" action="/{{ board }}/{{ thread[0]['number'] }}">
 	Title: <input type="text" name="title" /> <br />
