@@ -1,21 +1,4 @@
-body {
-	background-color: black;
-	color: green;
-}
-a:hover {
-	text-decoration: none;
-}
-a:visited {
-	color: yellow;
-}
-a {
-	color: yellow;
-}
-.title {
-	color: lightgreen;
-}
 .post {
-	background-color: #0F0F0F;
 	border-radius: 5px;
 	padding: 5px;
 	margin: 7px;

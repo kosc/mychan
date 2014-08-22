@@ -12,18 +12,16 @@
 	<div>
 		<hr />
 		{% for thread in threads %}
-			{% for post in thread %}
 				<div class="post">
-					<span class="title">{{ post['title'] }}</span>&nbsp;
-					<a href="/{{ board['name'] }}/{{ post['number'] }}">{{ post['number'] }}</a> <br />
+					<span class="title">{{ thread['title'] }}</span>&nbsp;
+					<a href="/{{ board['name'] }}/{{ thread['number'] }}">{{ thread['number'] }}</a> <br />
 					<br  />
-					{% if post['image'] != '' %}
-						<img src="/static/images/{{ post['image'] }}" width="200" />
+					{% if thread['image'] != '' %}
+						<img src="/static/images/{{ thread['image'] }}" width="200" />
 					{% end %}
 					<br />
-					{{ post['text'] }}<br />
+					{{ thread['text'] }}<br />
 				</div>
-			{% end %}
 			<hr />
 		{% end %}
 	</div>

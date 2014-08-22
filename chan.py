@@ -13,7 +13,7 @@ class MainHandler(RequestHandler):
     def get(self):
         boards = db.boards.find({}, {'name': 1, 'desc': 1})
         args = {'boards': boards}
-        title = 'Home Page'
+        title = 'Main page'
         self.render("templates/layout.html",
                     args=args,
                     page='index.html',
@@ -24,14 +24,7 @@ class BoardHandler(RequestHandler):
 
     def get(self, brd):
         board = db.boards.find_one({'name': brd})
-        dbthreads = db.threads.find({'board': brd})
-        threads = []
-        for dbthread in dbthreads:
-            posts = db.posts.find({'thread': dbthread['number']})
-            thread = [dbthread]
-            for post in posts:
-                thread.append(post)
-            threads.append(thread)
+        threads = db.posts.find({'board': brd, 'parent_id': 0})
         args = {'board': board, 'threads': threads}
         title = brd + ' - Threads'
         self.render("templates/layout.html",
@@ -49,20 +42,21 @@ class BoardHandler(RequestHandler):
             file_name = board + '_' + str(number) + '.jpg'
             img = open('static/images/' + file_name, 'wb')
             img.write(image_body)
-        db.threads.insert({
+        db.posts.insert({
             'board': board,
             'number': int(number),
             'title': title,
             'text': message,
-            'image': file_name})
+            'image': file_name,
+            'parent_id': 0})
         self.redirect("/" + board + "/")
 
 
 class ThreadHandler(RequestHandler):
 
     def get(self, board, number):
-        thread = list(db.threads.find({'number': int(number)}))
-        posts = list(db.posts.find({'thread': number}))
+        thread = list(db.posts.find({'number': int(number)}))
+        posts = list(db.posts.find({'parent_id': int(number)}))
         thread += posts
         args = {'thread': thread, 'board': board}
         title = board + ' - Thread #' + str(number)
@@ -83,7 +77,7 @@ class ThreadHandler(RequestHandler):
         db.posts.insert({
             'text': text,
             'title': title,
-            'thread': number,
+            'parent_id': int(number),
             'number': max_number(),
             'image': file_name})
         self.redirect("/" + board + "/" + number)
@@ -94,11 +88,7 @@ def max_number():
         post_number = db.posts.find().sort('number', -1).limit(1)[0]['number']
     except (IndexError):
         post_number = 0
-    try:
-        thr_number = db.threads.find().sort('number', -1).limit(1)[0]['number']
-    except (IndexError):
-        thr_number = 0
-    return max(post_number, thr_number) + 1
+    return post_number + 1
 
 
 application = tornado.web.Application([
