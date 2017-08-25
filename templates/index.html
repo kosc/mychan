@@ -1,7 +1,17 @@
 <h1>Hello!</h1>
 <div>
 	{% set boards = args['boards'] %}
-	{% for board in boards %}
-		<a href="/{{ board['name'] }}/">/{{ board['name']	}}/</a> - {{ board['desc'] }}<br />
+	{% if boards.count() > 0 %}
+		{% for board in boards %}
+			<a href="/{{ board['name'] }}/">/{{ board['name']	}}/</a> - {{ board['desc'] }}<br />
+		{% end %}
+	{% else %}
+		<p>Ooops! There is no boards yet. Run this simple commands on you mongodb terminal to add board /b/ with description 'About everything':</p>
+		<pre>
+			&gt; use chandb
+			switched to db chandb
+			&gt; db.boards.insert({'name': 'b', 'desc': 'About everything'})
+			WriteResult({ "nInserted" : 1 })
+		</pre>
 	{% end %}
 </div>
