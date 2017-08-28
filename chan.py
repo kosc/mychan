@@ -99,5 +99,8 @@ application = tornado.web.Application([
 ])
 
 if __name__ == "__main__":
-    application.listen(8888)
+    PORT = 8888
+    application.listen(PORT)
+    print("Dev server is running on http://127.0.0.1:{}/".format(PORT))
+    print("Press Ctrl-C to stop.")
     tornado.ioloop.IOLoop.instance().start()
